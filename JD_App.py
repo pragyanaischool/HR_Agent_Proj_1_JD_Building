@@ -64,7 +64,7 @@ company_logo = st.file_uploader("Upload Company Logo", type=["png", "jpg", "jpeg
 # Generate Job Description
 if st.button("Generate Job Description"):
     prompt = f"""
-    Generate a detailed and refined Job Description based on the following information:
+    Generate a detailed Job Description for the following:
     Job Title: {job_title}
     Education: {education_details if education_required else "Not Mandatory"}
     Experience: {str(experience)} years
@@ -78,7 +78,6 @@ if st.button("Generate Job Description"):
     Role & Responsibilities: {role_responsibility}
     Location: {location}
     Salary Range: {salary_range}
-    Enhance and refine the JD with additional details where necessary.
     """
     
     # Call to GROQ Llama Model
@@ -86,11 +85,11 @@ if st.button("Generate Job Description"):
         model="llama3-8b-8192",
         messages=[{"role": "system", "content": "You are a helpful AI assistant."},
                   {"role": "user", "content": prompt}],
-        max_tokens=1000
+        max_tokens=500
     )
     llm_response = response.choices[0].message.content if response.choices else "Generated Job Description based on inputs. (Replace with LLM API Response)"
     
-    st.subheader("Generated & Refined Job Description")
+    st.subheader("Generated Job Description")
     st.write(llm_response)
     
     if company_logo:
@@ -102,8 +101,8 @@ if st.button("Generate Job Description"):
         pdf.set_auto_page_break(auto=True, margin=15)
         pdf.add_page()
         
-        pdf.add_font("LiberationSans", "", FONT_PATH, uni=True)  # Use Unicode font
-        pdf.set_font("LiberationSans", size=12)
+        pdf.add_font("DejaVu", "", FONT_PATH, uni=True)  # Use Unicode font
+        pdf.set_font("DejaVu", size=12)
         
         if company_logo:
             img = Image.open(company_logo)
@@ -114,10 +113,10 @@ if st.button("Generate Job Description"):
                 pdf.image(tmpfile.name, x=10, y=8, w=30)
         
         pdf.ln(35)
-        pdf.set_font("LiberationSans", style='B', size=16)
+        pdf.set_font("DejaVu", style='B', size=16)
         pdf.cell(200, 10, job_title, ln=True, align='C')
         pdf.ln(10)
-        pdf.set_font("LiberationSans", size=12)
+        pdf.set_font("DejaVu", size=12)
         pdf.multi_cell(0, 10, f"Company: {company_name}\nLocation: {location}\nSalary Range: {salary_range}\n\n{llm_response}")
         
         pdf_output = BytesIO()
