@@ -13,15 +13,14 @@ API_KEY = "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"  # Replace 
 llm_client = groq.Client(api_key=API_KEY)
 
 # Job Title
-job_title = st.text_input("Enter Job Title: ")
-
-# Job Title
 job_title = st.text_input("Enter Job Title")
 
 # Education
 education_required = st.checkbox("Require Education Qualification?")
-education_details = st.text_input("Specify Education Qualification", "Bachelors in Computer Science") if education_required else ""
-
+education_details = st.multiselect(
+    "Select Education Qualification: Minimum Education Skill", 
+    [ "10th","12th","BE", "BCA", "M.E", "MCA", "PhD", "Post Doc"]
+)
 # Experience
 experience = st.slider("Years of Experience", 0.0, 20.0, 2.0)
 
