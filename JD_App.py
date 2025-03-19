@@ -61,24 +61,6 @@ location = st.text_input("Job Location")
 salary_range = st.text_input("Salary Range")
 company_logo = st.file_uploader("Upload Company Logo", type=["png", "jpg", "jpeg"])
 
-# Generate Company Description and Role & Responsibilities
-if st.button("Generate Company Details"):
-    prompt = f"Generate a professional company description and role responsibilities for a company named {company_name}."
-    
-    response = llm_client.chat.completions.create(
-        model="llama3-8b-8192",
-        messages=[{"role": "system", "content": "You are a helpful AI assistant."},
-                  {"role": "user", "content": prompt}],
-        max_tokens=500
-    )
-    
-    generated_text = response.choices[0].message.content if response.choices else "Could not generate details. Try again."
-    
-    st.subheader("Generated Company Description & Role Responsibilities")
-    st.write(generated_text)
-    
-    company_description, role_responsibility = generated_text.split("\n\n", 1) if "\n\n" in generated_text else (generated_text, "")
-
 # Generate Job Description
 if st.button("Generate Job Description"):
     prompt = f"""
@@ -113,52 +95,41 @@ if st.button("Generate Job Description"):
     
     if company_logo:
         st.image(company_logo, caption="Company Logo")
+
     # PDF Generation
     def generate_pdf():
         pdf = FPDF()
         pdf.set_auto_page_break(auto=True, margin=15)
         pdf.add_page()
-    
-        # Use built-in Helvetica font (avoiding custom fonts issue)
-        pdf.set_font("Helvetica", size=12)
-    
-        # Handle Company Logo (convert from BytesIO to actual file)
+        
+        pdf.add_font("LiberationSans", "", FONT_PATH, uni=True)  # Use Unicode font
+        pdf.set_font("LiberationSans", size=12)
+        
         if company_logo:
             img = Image.open(company_logo)
             img = img.convert("RGB")  # Ensure image compatibility
-    
+            
             with tempfile.NamedTemporaryFile(delete=False, suffix=".png") as tmpfile:
                 img.save(tmpfile.name, format="PNG")
                 pdf.image(tmpfile.name, x=10, y=8, w=30)
-    
-        # Add Job Title
+        
         pdf.ln(35)
-        pdf.set_font("Helvetica", style='B', size=16)
+        pdf.set_font("LiberationSans", style='B', size=16)
         pdf.cell(200, 10, job_title, ln=True, align='C')
         pdf.ln(10)
-    
-        # Add Job Details
-        pdf.set_font("Helvetica", size=12)
-        job_description_text = f"""
-        Company: {company_name}
-        Location: {location}
-        Salary Range: {salary_range}
-        {llm_response}
-        """
-    
-        pdf.multi_cell(0, 10, job_description_text)
-    
-        # Save PDF to memory
+        pdf.set_font("LiberationSans", size=12)
+        pdf.multi_cell(0, 10, f"Company: {company_name}\nLocation: {location}\nSalary Range: {salary_range}\n\n{llm_response}")
+        
         pdf_output = BytesIO()
         pdf.output(pdf_output, 'F')
         pdf_output.seek(0)
         return pdf_output.getvalue()
     
-# Generate PDF and Download
-pdf_data = generate_pdf()
-st.download_button(
-    label="Download Job Description PDF",
-    data=pdf_data,
-    file_name=f"{job_title}_Job_Description.pdf",
-    mime="application/pdf"
-)
+    pdf_data = generate_pdf()
+    st.download_button(
+        label="Download Job Description PDF",
+        data=pdf_data,
+        file_name=f"{job_title}_Job_Description.pdf",
+        mime="application/pdf"
+    )
+
