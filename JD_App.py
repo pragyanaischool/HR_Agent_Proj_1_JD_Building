@@ -4,6 +4,8 @@ from fpdf import FPDF
 from io import BytesIO
 from PIL import Image
 import tempfile
+import requests
+import os
 
 # Initialize Streamlit app
 st.title("Job Description Generator - Application")
@@ -15,6 +17,15 @@ llm_client = groq.Client(api_key=API_KEY)
 
 # Job Title
 job_title = st.text_input("Enter Job Title")
+
+# Download and use a Unicode font
+FONT_URL = "https://github.com/dejavu-fonts/dejavu-fonts/blob/master/ttf/DejaVuSans.ttf?raw=true"
+FONT_PATH = "DejaVuSans.ttf"
+
+if not os.path.exists(FONT_PATH):
+    response = requests.get(FONT_URL)
+    with open(FONT_PATH, "wb") as f:
+        f.write(response.content)
 
 # Education
 education_required = st.checkbox("Require Education Qualification?")
