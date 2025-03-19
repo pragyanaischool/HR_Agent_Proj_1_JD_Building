@@ -6,7 +6,7 @@ from PIL import Image
 
 # Initialize Streamlit app
 st.title("Job Description Generator - Application")
-st.image("")
+st.image("PragyanAI_Transperent_github.png")
 # Initialize LLM
 API_KEY = "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"  # Replace with actual API key
 llm = groq.Groq(model="llama3-8b-8192", api_key=API_KEY)
