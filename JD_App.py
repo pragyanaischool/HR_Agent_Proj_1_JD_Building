@@ -61,10 +61,31 @@ location = st.text_input("Job Location")
 salary_range = st.text_input("Salary Range")
 company_logo = st.file_uploader("Upload Company Logo", type=["png", "jpg", "jpeg"])
 
+# Generate Company Description and Role & Responsibilities
+if st.button("Generate Company Details"):
+    prompt = f"""
+    Generate a professional company description based on the company name: {company_name}.
+    Also, generate role responsibilities based on the job title: {job_title} and the given key skills.
+    """
+    
+    response = llm_client.chat.completions.create(
+        model="llama3-8b-8192",
+        messages=[{"role": "system", "content": "You are a helpful AI assistant."},
+                  {"role": "user", "content": prompt}],
+        max_tokens=500
+    )
+    
+    generated_text = response.choices[0].message.content if response.choices else "Could not generate details. Try again."
+    
+    st.subheader("Generated Company Description & Role Responsibilities")
+    st.write(generated_text)
+    
+    company_description, role_responsibility = generated_text.split("\n\n", 1) if "\n\n" in generated_text else (generated_text, "")
+
 # Generate Job Description
 if st.button("Generate Job Description"):
     prompt = f"""
-    Generate a detailed Job Description for the following:
+    Generate a detailed and refined Job Description based on the following information:
     Job Title: {job_title}
     Education: {education_details if education_required else "Not Mandatory"}
     Experience: {str(experience)} years
@@ -78,6 +99,7 @@ if st.button("Generate Job Description"):
     Role & Responsibilities: {role_responsibility}
     Location: {location}
     Salary Range: {salary_range}
+    Enhance and refine the JD with additional details where necessary.
     """
     
     # Call to GROQ Llama Model
@@ -85,11 +107,11 @@ if st.button("Generate Job Description"):
         model="llama3-8b-8192",
         messages=[{"role": "system", "content": "You are a helpful AI assistant."},
                   {"role": "user", "content": prompt}],
-        max_tokens=500
+        max_tokens=1000
     )
     llm_response = response.choices[0].message.content if response.choices else "Generated Job Description based on inputs. (Replace with LLM API Response)"
     
-    st.subheader("Generated Job Description")
+    st.subheader("Generated & Refined Job Description")
     st.write(llm_response)
     
     if company_logo:
@@ -101,8 +123,7 @@ if st.button("Generate Job Description"):
         pdf.set_auto_page_break(auto=True, margin=15)
         pdf.add_page()
         
-        pdf.add_font("DejaVu", "", FONT_PATH, uni=True)  # Use Unicode font
-        pdf.set_font("DejaVu", size=12)
+        pdf.set_font("Helvetica", size=12)
         
         if company_logo:
             img = Image.open(company_logo)
@@ -113,10 +134,10 @@ if st.button("Generate Job Description"):
                 pdf.image(tmpfile.name, x=10, y=8, w=30)
         
         pdf.ln(35)
-        pdf.set_font("DejaVu", style='B', size=16)
+        pdf.set_font("Helvetica", style='B', size=16)
         pdf.cell(200, 10, job_title, ln=True, align='C')
         pdf.ln(10)
-        pdf.set_font("DejaVu", size=12)
+        pdf.set_font("Helvetica", size=12)
         pdf.multi_cell(0, 10, f"Company: {company_name}\nLocation: {location}\nSalary Range: {salary_range}\n\n{llm_response}")
         
         pdf_output = BytesIO()
@@ -131,4 +152,3 @@ if st.button("Generate Job Description"):
         file_name=f"{job_title}_Job_Description.pdf",
         mime="application/pdf"
     )
-
