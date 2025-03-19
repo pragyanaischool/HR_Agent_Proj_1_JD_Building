@@ -132,20 +132,20 @@ if st.button("Generate Job Description"):
         file_name=f"{job_title}_Job_Description.md",
         mime="text/markdown"
     )
-    def md_to_pdf(md_file):
+    def md_to_pdf(md_file,name):
         # Read the Markdown file
         with open(md_file, "r", encoding="utf-8") as f:
             md_content = f.read()
     
         # Convert Markdown to HTML
         html_content = markdown.markdown(md_content)
-        pdf_file=f"{job_title}_Job_Description.pdf"
+        pdf_file=f"{name}_Job_Description.pdf"
         # Convert HTML to PDF
         pdfkit.from_string(html_content, pdf_file)
         print(f"Converted {md_file} to {pdf_file}")
         return pdf_file
     # Example usage
-    pdf_file = md_to_pdf(md_data)
+    pdf_file = md_to_pdf(md_data,job_title)
     st.download_button(
         label="Download Job Description PDF",
         data=pdf_data,
