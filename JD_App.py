@@ -13,7 +13,7 @@ import pdfkit
 st.title("Job Description Generator - Application")
 st.image("PragyanAI_Transperent_github.png")
 # Initialize LLM
-API_KEY = "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"  # Replace with actual API key
+API_KEY = "Here API Key"  # Replace with actual API key
 #llm = groq.Groq(model="llama3-8b-8192", api_key=API_KEY)
 llm_client = groq.Client(api_key=API_KEY)
 
