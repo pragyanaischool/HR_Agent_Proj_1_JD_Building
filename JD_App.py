@@ -49,6 +49,24 @@ location = st.text_input("Job Location")
 salary_range = st.text_input("Salary Range")
 company_logo = st.file_uploader("Upload Company Logo", type=["png", "jpg", "jpeg"])
 
+# Generate Company Description and Role & Responsibilities
+if st.button("Generate Company Details"):
+    prompt = f"Generate a professional company description and role responsibilities for a company named {company_name}."
+    
+    response = llm_client.chat.completions.create(
+        model="llama3-8b-8192",
+        messages=[{"role": "system", "content": "You are a helpful AI assistant."},
+                  {"role": "user", "content": prompt}],
+        max_tokens=500
+    )
+    
+    generated_text = response.choices[0].message.content if response.choices else "Could not generate details. Try again."
+    
+    st.subheader("Generated Company Description & Role Responsibilities")
+    st.write(generated_text)
+    
+    company_description, role_responsibility = generated_text.split("\n\n", 1) if "\n\n" in generated_text else (generated_text, "")
+
 # Generate Job Description
 if st.button("Generate Job Description"):
     prompt = f"""
@@ -69,12 +87,13 @@ if st.button("Generate Job Description"):
     """
     
     # Call to GROQ Llama Model
-    response = llm_client.completions.create(
+    response = llm_client.chat.completions.create(
         model="llama3-8b-8192",
-        prompt=prompt,
+        messages=[{"role": "system", "content": "You are a helpful AI assistant."},
+                  {"role": "user", "content": prompt}],
         max_tokens=500
     )
-    llm_response = response.choices[0].text if response.choices else "Generated Job Description based on inputs. (Replace with LLM API Response)"
+    llm_response = response.choices[0].message.content if response.choices else "Generated Job Description based on inputs. (Replace with LLM API Response)"
     
     st.subheader("Generated Job Description")
     st.write(llm_response)
@@ -113,4 +132,3 @@ if st.button("Generate Job Description"):
         file_name=f"{job_title}_Job_Description.pdf",
         mime="application/pdf"
     )
-
