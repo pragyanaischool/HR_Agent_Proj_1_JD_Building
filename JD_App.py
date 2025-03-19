@@ -6,12 +6,8 @@ from PIL import Image
 import tempfile
 import requests
 import os
-from reportlab.lib.pagesizes import A4
-from reportlab.pdfgen import canvas
-from reportlab.lib.utils import ImageReader
-from reportlab.lib.styles import getSampleStyleSheet
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
-from reportlab.lib import colors
+import markdown
+import pdfkit
 
 # Initialize Streamlit app
 st.title("Job Description Generator - Application")
@@ -136,7 +132,27 @@ if st.button("Generate Job Description"):
         file_name=f"{job_title}_Job_Description.md",
         mime="text/markdown"
     )
-
+    def md_to_pdf(md_file):
+        # Read the Markdown file
+        with open(md_file, "r", encoding="utf-8") as f:
+            md_content = f.read()
+    
+        # Convert Markdown to HTML
+        html_content = markdown.markdown(md_content)
+        pdf_file=f"{job_title}_Job_Description.pdf"
+        # Convert HTML to PDF
+        pdfkit.from_string(html_content, pdf_file)
+        print(f"Converted {md_file} to {pdf_file}")
+        return 
+        # Example usage
+        md_to_pdf(md_data)
+        pdf_file = pdf_data = generate_pdf()
+        st.download_button(
+            label="Download Job Description PDF",
+            data=pdf_data,
+            file_name=pdf_file,
+            mime="application/pdf"
+        )
     '''
     # PDF Generation using ReportLab
     def generate_pdf():
