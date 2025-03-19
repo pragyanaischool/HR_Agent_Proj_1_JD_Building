@@ -124,13 +124,11 @@ if st.button("Generate Job Description"):
         {llm_response}
         """
         return md_output
-
     md_data = generate_md()
     # Save the file locally
     md_file_name = f"{job_title}_Job_Description.md"
     with open(md_file_name, "w", encoding="utf-8") as file:
         file.write(md_data)
-
     # Streamlit UI to Download the File
     st.download_button(
         label="Download Job Description as Markdown",
@@ -140,6 +138,8 @@ if st.button("Generate Job Description"):
     )
 
     def md_to_pdf(md_file,name):
+        st.write(md_file)
+        st.write(name)
         # Read the Markdown file
         with open(md_file, "r", encoding="utf-8") as f:
             md_content = f.read()
@@ -156,85 +156,9 @@ if st.button("Generate Job Description"):
     # Read PDF as bytes for download
     with open(pdf_file, "rb") as pdf:
         pdf_data = pdf.read()
-
     st.download_button(
         label="Download Job Description PDF",
         data=pdf_data,
         file_name=pdf_file,
         mime="application/pdf"
     )
-    '''
-    # PDF Generation using ReportLab
-    def generate_pdf():
-        pdf_output = BytesIO()
-        doc = SimpleDocTemplate(pdf_output, pagesize=A4)
-        elements = []
-        styles = getSampleStyleSheet()
-        
-        # Add Company Logo
-        if company_logo:
-            img = Image.open(company_logo)
-            img = img.convert("RGB")
-            img_reader = ImageReader(img)
-            elements.append(img_reader)
-        
-        # Title
-        elements.append(Paragraph(f"<b>{job_title}</b>", styles["Title"]))
-        elements.append(Spacer(1, 12))
-        
-        # Job Details
-        job_details = f"""
-        <b>Company:</b> {company_name}<br/>
-        <b>Location:</b> {location}<br/>
-        <b>Salary Range:</b> {salary_range}<br/><br/>
-        {llm_response}
-        """
-        elements.append(Paragraph(job_details, styles["BodyText"]))
-        
-        doc.build(elements)
-        pdf_output.seek(0)
-        return pdf_output.getvalue()
-    
-    pdf_data = generate_pdf()
-    st.download_button(
-        label="Download Job Description PDF",
-        data=pdf_data,
-        file_name=f"{job_title}_Job_Description.pdf",
-        mime="application/pdf"
-    )
-    # PDF Generation
-    def generate_pdf():
-        pdf = FPDF()
-        pdf.set_auto_page_break(auto=True, margin=15)
-        pdf.add_page()
-        
-        pdf.set_font("Helvetica", size=12)
-        
-        if company_logo:
-            img = Image.open(company_logo)
-            img = img.convert("RGB")  # Ensure image compatibility
-            
-            with tempfile.NamedTemporaryFile(delete=False, suffix=".png") as tmpfile:
-                img.save(tmpfile.name, format="PNG")
-                pdf.image(tmpfile.name, x=10, y=8, w=30)
-        
-        pdf.ln(35)
-        pdf.set_font("Helvetica", style='B', size=16)
-        pdf.cell(200, 10, job_title, ln=True, align='C')
-        pdf.ln(10)
-        pdf.set_font("Helvetica", size=12)
-        pdf.multi_cell(0, 10, f"Company: {company_name}\nLocation: {location}\nSalary Range: {salary_range}\n\n{llm_response}")
-        
-        pdf_output = BytesIO()
-        pdf.output(pdf_output, 'F')
-        pdf_output.seek(0)
-        return pdf_output.getvalue()
-    
-    pdf_data = generate_pdf()
-    st.download_button(
-        label="Download Job Description PDF",
-        data=pdf_data,
-        file_name=f"{job_title}_Job_Description.pdf",
-        mime="application/pdf"
-    )
-'''
