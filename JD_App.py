@@ -13,7 +13,7 @@ import pdfkit
 st.title("Job Description Generator - Application")
 st.image("PragyanAI_Transperent_github.png")
 # Initialize LLM
-API_KEY = "Add Key Here"  # Replace with actual API key
+API_KEY = "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"  # Replace with actual API key
 #llm = groq.Groq(model="llama3-8b-8192", api_key=API_KEY)
 llm_client = groq.Client(api_key=API_KEY)
 
@@ -143,16 +143,15 @@ if st.button("Generate Job Description"):
         # Convert HTML to PDF
         pdfkit.from_string(html_content, pdf_file)
         print(f"Converted {md_file} to {pdf_file}")
-        return 
-        # Example usage
-        md_to_pdf(md_data)
-        pdf_file = pdf_data = generate_pdf()
-        st.download_button(
-            label="Download Job Description PDF",
-            data=pdf_data,
-            file_name=pdf_file,
-            mime="application/pdf"
-        )
+        return pdf_file
+    # Example usage
+    pdf_file = md_to_pdf(md_data)
+    st.download_button(
+        label="Download Job Description PDF",
+        data=pdf_data,
+        file_name=pdf_file,
+        mime="application/pdf"
+    )
     '''
     # PDF Generation using ReportLab
     def generate_pdf():
