@@ -2,3 +2,4 @@ streamlit
 groq
 fpdf
 pillow
+requests
