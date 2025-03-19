@@ -124,14 +124,21 @@ if st.button("Generate Job Description"):
         {llm_response}
         """
         return md_output
-    
+
     md_data = generate_md()
+    # Save the file locally
+    md_file_name = f"{job_title}_Job_Description.md"
+    with open(md_file_name, "w", encoding="utf-8") as file:
+        file.write(md_data)
+
+    # Streamlit UI to Download the File
     st.download_button(
         label="Download Job Description as Markdown",
         data=md_data,
-        file_name=f"{job_title}_Job_Description.md",
+        file_name=md_file_name,
         mime="text/markdown"
     )
+
     def md_to_pdf(md_file,name):
         # Read the Markdown file
         with open(md_file, "r", encoding="utf-8") as f:
@@ -145,7 +152,11 @@ if st.button("Generate Job Description"):
         print(f"Converted {md_file} to {pdf_file}")
         return pdf_file
     # Example usage
-    pdf_file = md_to_pdf(md_data,job_title)
+    pdf_file = md_to_pdf(md_file_name,job_title)
+    # Read PDF as bytes for download
+    with open(pdf_file, "rb") as pdf:
+        pdf_data = pdf.read()
+
     st.download_button(
         label="Download Job Description PDF",
         data=pdf_data,
