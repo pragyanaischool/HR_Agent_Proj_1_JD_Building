@@ -85,7 +85,7 @@ if st.button("Generate Job Description"):
     Generate a detailed Job Description for the following:
     Job Title: {job_title}
     Education: {education_details if education_required else "Not Mandatory"}
-    Experience: {experience} years
+    Experience: {str(experience)} years
     Key Skills: {', '.join(key_skills)}
     Other Skills: {', '.join(other_skills)}
     Mandatory Skills: {mandatory_skills}
