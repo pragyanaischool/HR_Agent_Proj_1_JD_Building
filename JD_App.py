@@ -6,6 +6,12 @@ from PIL import Image
 import tempfile
 import requests
 import os
+from reportlab.lib.pagesizes import A4
+from reportlab.pdfgen import canvas
+from reportlab.lib.utils import ImageReader
+from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
+from reportlab.lib import colors
 
 # Initialize Streamlit app
 st.title("Job Description Generator - Application")
@@ -16,16 +22,7 @@ API_KEY = "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"  # Replace 
 llm_client = groq.Client(api_key=API_KEY)
 
 # Job Title
-job_title = st.text_input("Enter Job Title")
-
-# Download and use a Unicode font
-FONT_URL = "https://github.com/dejavu-fonts/dejavu-fonts/blob/master/ttf/DejaVuSans.ttf?raw=true"
-FONT_PATH = "DejaVuSans.ttf"
-
-if not os.path.exists(FONT_PATH):
-    response = requests.get(FONT_URL)
-    with open(FONT_PATH, "wb") as f:
-        f.write(response.content)
+job_title = st.text_input("Enter Job Title: ")
 
 # Education
 education_required = st.checkbox("Require Education Qualification?")
@@ -34,7 +31,7 @@ education_details = st.multiselect(
     [ "10th","12th","BE", "BCA", "M.E", "MCA", "PhD", "Post Doc"]
 )
 # Experience
-experience = st.slider("Years of Experience", 0.0, 20.0, 2.0)
+experience = st.slider("Years of Experience", 0, 20, 2)
 
 # Key Skills
 key_skills = st.multiselect(
@@ -58,9 +55,9 @@ company_name = st.text_input("Company Name")
 company_description = st.text_area("Company Description")
 role_responsibility = st.text_area("Role & Responsibilities")
 location = st.text_input("Job Location")
-salary_range = st.text_input("Salary Range")
+salary_range = st.text_input("Salary Range In Rupees")
 company_logo = st.file_uploader("Upload Company Logo", type=["png", "jpg", "jpeg"])
-
+contact_email = st.text_input("Enter the Email of recruiters:")
 # Generate Company Description and Role & Responsibilities
 if st.button("Generate Company Details"):
     prompt = f"""
@@ -99,6 +96,8 @@ if st.button("Generate Job Description"):
     Role & Responsibilities: {role_responsibility}
     Location: {location}
     Salary Range: {salary_range}
+    Contact Details = {contact_email}
+
     Enhance and refine the JD with additional details where necessary.
     """
     
@@ -116,7 +115,7 @@ if st.button("Generate Job Description"):
     
     if company_logo:
         st.image(company_logo, caption="Company Logo")
-
+'''
     # PDF Generation
     def generate_pdf():
         pdf = FPDF()
@@ -142,6 +141,45 @@ if st.button("Generate Job Description"):
         
         pdf_output = BytesIO()
         pdf.output(pdf_output, 'F')
+        pdf_output.seek(0)
+        return pdf_output.getvalue()
+    
+    pdf_data = generate_pdf()
+    st.download_button(
+        label="Download Job Description PDF",
+        data=pdf_data,
+        file_name=f"{job_title}_Job_Description.pdf",
+        mime="application/pdf"
+    )
+'''
+# PDF Generation using ReportLab
+    def generate_pdf():
+        pdf_output = BytesIO()
+        doc = SimpleDocTemplate(pdf_output, pagesize=A4)
+        elements = []
+        styles = getSampleStyleSheet()
+        
+        # Add Company Logo
+        if company_logo:
+            img = Image.open(company_logo)
+            img = img.convert("RGB")
+            img_reader = ImageReader(img)
+            elements.append(img_reader)
+        
+        # Title
+        elements.append(Paragraph(f"<b>{job_title}</b>", styles["Title"]))
+        elements.append(Spacer(1, 12))
+        
+        # Job Details
+        job_details = f"""
+        <b>Company:</b> {company_name}<br/>
+        <b>Location:</b> {location}<br/>
+        <b>Salary Range:</b> {salary_range}<br/><br/>
+        {llm_response}
+        """
+        elements.append(Paragraph(job_details, styles["BodyText"]))
+        
+        doc.build(elements)
         pdf_output.seek(0)
         return pdf_output.getvalue()
     
