@@ -3,6 +3,7 @@ import groq
 from fpdf import FPDF
 from io import BytesIO
 from PIL import Image
+import tempfile
 
 # Initialize Streamlit app
 st.title("Job Description Generator - Application")
