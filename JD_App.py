@@ -115,6 +115,29 @@ if st.button("Generate Job Description"):
     
     if company_logo:
         st.image(company_logo, caption="Company Logo")
+    # Markdown File Generation
+    def generate_md():
+        md_output = f"""
+        # {job_title}
+        
+        **Company:** {company_name}  
+        **Location:** {location}  
+        **Salary Range:** {salary_range}  
+        
+        ## Job Description  
+        {llm_response}
+        """
+        return md_output
+    
+    md_data = generate_md()
+    st.download_button(
+        label="Download Job Description as Markdown",
+        data=md_data,
+        file_name=f"{job_title}_Job_Description.md",
+        mime="text/markdown"
+    )
+
+    '''
     # PDF Generation using ReportLab
     def generate_pdf():
         pdf_output = BytesIO()
@@ -153,7 +176,6 @@ if st.button("Generate Job Description"):
         file_name=f"{job_title}_Job_Description.pdf",
         mime="application/pdf"
     )
-'''
     # PDF Generation
     def generate_pdf():
         pdf = FPDF()
