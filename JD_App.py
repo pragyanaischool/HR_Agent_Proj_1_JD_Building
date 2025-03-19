@@ -9,10 +9,14 @@ st.title("Job Description Generator - Application")
 st.image("PragyanAI_Transperent_github.png")
 # Initialize LLM
 API_KEY = "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"  # Replace with actual API key
-llm = groq.Groq(model="llama3-8b-8192", api_key=API_KEY)
+#llm = groq.Groq(model="llama3-8b-8192", api_key=API_KEY)
+llm_client = groq.Client(api_key=API_KEY)
 
 # Job Title
 job_title = st.text_input("Enter Job Title: ")
+
+# Job Title
+job_title = st.text_input("Enter Job Title")
 
 # Education
 education_required = st.checkbox("Require Education Qualification?")
@@ -66,8 +70,12 @@ if st.button("Generate Job Description"):
     """
     
     # Call to GROQ Llama Model
-    response = llm.generate(prompt)
-    llm_response = response.get("text", "Generated Job Description based on inputs. (Replace with LLM API Response)")
+    response = llm_client.completions.create(
+        model="llama3-8b-8192",
+        prompt=prompt,
+        max_tokens=500
+    )
+    llm_response = response.choices[0].text if response.choices else "Generated Job Description based on inputs. (Replace with LLM API Response)"
     
     st.subheader("Generated Job Description")
     st.write(llm_response)
