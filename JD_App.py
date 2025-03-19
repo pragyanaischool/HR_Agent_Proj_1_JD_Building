@@ -111,10 +111,10 @@ if st.button("Generate Job Description"):
         if company_logo:
             img = Image.open(company_logo)
             img = img.convert("RGB")  # Ensure image compatibility
-            img_buffer = BytesIO()
-            img.save(img_buffer, format="PNG")  # Save in PNG format
-            img_buffer.seek(0)
-            pdf.image(img_buffer, x=10, y=8, w=30, type='PNG')
+            
+            with tempfile.NamedTemporaryFile(delete=False, suffix=".png") as tmpfile:
+                img.save(tmpfile.name, format="PNG")
+                pdf.image(tmpfile.name, x=10, y=8, w=30)
         
         pdf.ln(35)
         pdf.set_font("Arial", style='B', size=16)
@@ -135,3 +135,4 @@ if st.button("Generate Job Description"):
         file_name=f"{job_title}_Job_Description.pdf",
         mime="application/pdf"
     )
+
