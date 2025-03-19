@@ -115,44 +115,7 @@ if st.button("Generate Job Description"):
     
     if company_logo:
         st.image(company_logo, caption="Company Logo")
-'''
-    # PDF Generation
-    def generate_pdf():
-        pdf = FPDF()
-        pdf.set_auto_page_break(auto=True, margin=15)
-        pdf.add_page()
-        
-        pdf.set_font("Helvetica", size=12)
-        
-        if company_logo:
-            img = Image.open(company_logo)
-            img = img.convert("RGB")  # Ensure image compatibility
-            
-            with tempfile.NamedTemporaryFile(delete=False, suffix=".png") as tmpfile:
-                img.save(tmpfile.name, format="PNG")
-                pdf.image(tmpfile.name, x=10, y=8, w=30)
-        
-        pdf.ln(35)
-        pdf.set_font("Helvetica", style='B', size=16)
-        pdf.cell(200, 10, job_title, ln=True, align='C')
-        pdf.ln(10)
-        pdf.set_font("Helvetica", size=12)
-        pdf.multi_cell(0, 10, f"Company: {company_name}\nLocation: {location}\nSalary Range: {salary_range}\n\n{llm_response}")
-        
-        pdf_output = BytesIO()
-        pdf.output(pdf_output, 'F')
-        pdf_output.seek(0)
-        return pdf_output.getvalue()
-    
-    pdf_data = generate_pdf()
-    st.download_button(
-        label="Download Job Description PDF",
-        data=pdf_data,
-        file_name=f"{job_title}_Job_Description.pdf",
-        mime="application/pdf"
-    )
-'''
-# PDF Generation using ReportLab
+    # PDF Generation using ReportLab
     def generate_pdf():
         pdf_output = BytesIO()
         doc = SimpleDocTemplate(pdf_output, pagesize=A4)
@@ -190,3 +153,40 @@ if st.button("Generate Job Description"):
         file_name=f"{job_title}_Job_Description.pdf",
         mime="application/pdf"
     )
+'''
+    # PDF Generation
+    def generate_pdf():
+        pdf = FPDF()
+        pdf.set_auto_page_break(auto=True, margin=15)
+        pdf.add_page()
+        
+        pdf.set_font("Helvetica", size=12)
+        
+        if company_logo:
+            img = Image.open(company_logo)
+            img = img.convert("RGB")  # Ensure image compatibility
+            
+            with tempfile.NamedTemporaryFile(delete=False, suffix=".png") as tmpfile:
+                img.save(tmpfile.name, format="PNG")
+                pdf.image(tmpfile.name, x=10, y=8, w=30)
+        
+        pdf.ln(35)
+        pdf.set_font("Helvetica", style='B', size=16)
+        pdf.cell(200, 10, job_title, ln=True, align='C')
+        pdf.ln(10)
+        pdf.set_font("Helvetica", size=12)
+        pdf.multi_cell(0, 10, f"Company: {company_name}\nLocation: {location}\nSalary Range: {salary_range}\n\n{llm_response}")
+        
+        pdf_output = BytesIO()
+        pdf.output(pdf_output, 'F')
+        pdf_output.seek(0)
+        return pdf_output.getvalue()
+    
+    pdf_data = generate_pdf()
+    st.download_button(
+        label="Download Job Description PDF",
+        data=pdf_data,
+        file_name=f"{job_title}_Job_Description.pdf",
+        mime="application/pdf"
+    )
+'''
