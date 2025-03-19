@@ -95,7 +95,7 @@ if st.button("Generate Job Description"):
     Company Description: {company_description}
     Role & Responsibilities: {role_responsibility}
     Location: {location}
-    Salary Range: {salary_range}
+    Salary Range: {str(salary_range)}
     """
     
     # Call to GROQ Llama Model
