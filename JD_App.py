@@ -82,7 +82,7 @@ if st.button("Generate Company Details"):
 # Generate Job Description
 if st.button("Generate Job Description"):
     prompt = f"""
-    Generate a detailed Job Description for the following:
+    Generate a detailed and refined Job Description based on the following information:
     Job Title: {job_title}
     Education: {education_details if education_required else "Not Mandatory"}
     Experience: {str(experience)} years
@@ -95,7 +95,8 @@ if st.button("Generate Job Description"):
     Company Description: {company_description}
     Role & Responsibilities: {role_responsibility}
     Location: {location}
-    Salary Range: {str(salary_range)}
+    Salary Range: {salary_range}
+    Enhance and refine the JD with additional details where necessary.
     """
     
     # Call to GROQ Llama Model
@@ -103,11 +104,11 @@ if st.button("Generate Job Description"):
         model="llama3-8b-8192",
         messages=[{"role": "system", "content": "You are a helpful AI assistant."},
                   {"role": "user", "content": prompt}],
-        max_tokens=500
+        max_tokens=1000
     )
     llm_response = response.choices[0].message.content if response.choices else "Generated Job Description based on inputs. (Replace with LLM API Response)"
     
-    st.subheader("Generated Job Description")
+    st.subheader("Generated & Refined Job Description")
     st.write(llm_response)
     
     if company_logo:
