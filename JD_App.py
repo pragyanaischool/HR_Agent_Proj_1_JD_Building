@@ -119,8 +119,8 @@ if st.button("Generate Job Description"):
         pdf.set_auto_page_break(auto=True, margin=15)
         pdf.add_page()
         
-        pdf.add_font("DejaVu", "", "DejaVuSans.ttf", uni=True)  # Use Unicode font
-        pdf.set_font("DejaVu", size=12)
+        pdf.add_font("LiberationSans", "", FONT_PATH, uni=True)  # Use Unicode font
+        pdf.set_font("LiberationSans", size=12)
         
         if company_logo:
             img = Image.open(company_logo)
@@ -131,10 +131,10 @@ if st.button("Generate Job Description"):
                 pdf.image(tmpfile.name, x=10, y=8, w=30)
         
         pdf.ln(35)
-        pdf.set_font("DejaVu", style='B', size=16)
+        pdf.set_font("LiberationSans", style='B', size=16)
         pdf.cell(200, 10, job_title, ln=True, align='C')
         pdf.ln(10)
-        pdf.set_font("DejaVu", size=12)
+        pdf.set_font("LiberationSans", size=12)
         pdf.multi_cell(0, 10, f"Company: {company_name}\nLocation: {location}\nSalary Range: {salary_range}\n\n{llm_response}")
         
         pdf_output = BytesIO()
