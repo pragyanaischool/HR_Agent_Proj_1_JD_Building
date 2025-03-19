@@ -113,46 +113,47 @@ if st.button("Generate Job Description"):
     
     if company_logo:
         st.image(company_logo, caption="Company Logo")
-
-    pdf = FPDF()
-    pdf.set_auto_page_break(auto=True, margin=15)
-    pdf.add_page()
-
-    # Use built-in Helvetica font (avoiding custom fonts issue)
-    pdf.set_font("Helvetica", size=12)
-
-    # Handle Company Logo (convert from BytesIO to actual file)
-    if company_logo:
-        img = Image.open(company_logo)
-        img = img.convert("RGB")  # Ensure image compatibility
-
-        with tempfile.NamedTemporaryFile(delete=False, suffix=".png") as tmpfile:
-            img.save(tmpfile.name, format="PNG")
-            pdf.image(tmpfile.name, x=10, y=8, w=30)
-
-    # Add Job Title
-    pdf.ln(35)
-    pdf.set_font("Helvetica", style='B', size=16)
-    pdf.cell(200, 10, job_title, ln=True, align='C')
-    pdf.ln(10)
-
-    # Add Job Details
-    pdf.set_font("Helvetica", size=12)
-    job_description_text = f"""
-    Company: {company_name}
-    Location: {location}
-    Salary Range: {salary_range}
-    {llm_response}
-    """
-
-    pdf.multi_cell(0, 10, job_description_text)
-
-    # Save PDF to memory
-    pdf_output = BytesIO()
-    pdf.output(pdf_output, 'F')
-    pdf_output.seek(0)
-    return pdf_output.getvalue()
-
+    # PDF Generation
+    def generate_pdf():
+        pdf = FPDF()
+        pdf.set_auto_page_break(auto=True, margin=15)
+        pdf.add_page()
+    
+        # Use built-in Helvetica font (avoiding custom fonts issue)
+        pdf.set_font("Helvetica", size=12)
+    
+        # Handle Company Logo (convert from BytesIO to actual file)
+        if company_logo:
+            img = Image.open(company_logo)
+            img = img.convert("RGB")  # Ensure image compatibility
+    
+            with tempfile.NamedTemporaryFile(delete=False, suffix=".png") as tmpfile:
+                img.save(tmpfile.name, format="PNG")
+                pdf.image(tmpfile.name, x=10, y=8, w=30)
+    
+        # Add Job Title
+        pdf.ln(35)
+        pdf.set_font("Helvetica", style='B', size=16)
+        pdf.cell(200, 10, job_title, ln=True, align='C')
+        pdf.ln(10)
+    
+        # Add Job Details
+        pdf.set_font("Helvetica", size=12)
+        job_description_text = f"""
+        Company: {company_name}
+        Location: {location}
+        Salary Range: {salary_range}
+        {llm_response}
+        """
+    
+        pdf.multi_cell(0, 10, job_description_text)
+    
+        # Save PDF to memory
+        pdf_output = BytesIO()
+        pdf.output(pdf_output, 'F')
+        pdf_output.seek(0)
+        return pdf_output.getvalue()
+    
 # Generate PDF and Download
 pdf_data = generate_pdf()
 st.download_button(
