@@ -110,9 +110,11 @@ if st.button("Generate Job Description"):
         
         if company_logo:
             img = Image.open(company_logo)
-            img_path = "company_logo.jpg"
-            img.save(img_path)
-            pdf.image(img_path, x=10, y=8, w=30)
+            img = img.convert("RGB")  # Ensure image compatibility
+            img_buffer = BytesIO()
+            img.save(img_buffer, format="PNG")  # Save in PNG format
+            img_buffer.seek(0)
+            pdf.image(img_buffer, x=10, y=8, w=30, type='PNG')
         
         pdf.ln(35)
         pdf.set_font("Arial", style='B', size=16)
@@ -123,6 +125,7 @@ if st.button("Generate Job Description"):
         
         pdf_output = BytesIO()
         pdf.output(pdf_output, 'F')
+        pdf_output.seek(0)
         return pdf_output.getvalue()
     
     pdf_data = generate_pdf()
