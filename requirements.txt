@@ -3,4 +3,3 @@ groq
 fpdf
 pillow
 requests
-ttf-dejavu
